@@ -138,7 +138,7 @@ function IntakeTool() {
   const generate = async () => {
     setLoading(true); setError(""); setResult("");
     try {
-      const text = await callClaude(`Summarize this patient intake for a provider chart note. Patient: ${form.patientName} | DOB: ${form.dob || "not provided"} | Chief Complaint: ${form.chiefComplaint} | Symptoms: ${form.symptoms} | Medications: ${form.medications || "none"} | Allergies: ${form.allergies || "none"} | History: ${form.history || "none"}. Write a concise clinical-style summary (4-6 sentences). Professional, structured. Output summary only.`);
+      const text = await callClaude(`Summarize this patient intake for a provider chart note. Patient: ${form.patientName} | DOB: ${form.dob || "not provided"} | Age: ${form.dob ? Math.floor((new Date() - new Date(form.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : "unknown"} | Chief Complaint: ${form.chiefComplaint} | Symptoms: ${form.symptoms} | Medications: ${form.medications || "none"} | Allergies: ${form.allergies || "none"} | History: ${form.history || "none"}. Write a concise clinical-style summary (4-6 sentences). Professional, structured. Output summary only.`);
       setResult(text);
     } catch { setError("Something went wrong. Please try again."); }
     setLoading(false);

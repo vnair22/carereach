@@ -16,7 +16,7 @@ async function callClaude(prompt) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: claude-sonnet-4-5,
+      model: "claude-sonnet-4-5",
       max_tokens: 1000,
       messages: [{ role: "user", content: prompt }],
     }),
@@ -135,10 +135,19 @@ function IntakeTool() {
   const [form, setForm] = useState({ patientName: "", dob: "", chiefComplaint: "", symptoms: "", medications: "", allergies: "", history: "" });
   const [result, setResult] = useState(""); const [loading, setLoading] = useState(false); const [error, setError] = useState("");
   const valid = form.patientName && form.chiefComplaint && form.symptoms;
+  const getAge = (dob) => {
+    if (!dob) return "unknown";
+    const today = new Date();
+    const birth = new Date(dob);
+    let age = today.getFullYear() - birth.getFullYear();
+    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+    return age;
+  };
   const generate = async () => {
     setLoading(true); setError(""); setResult("");
     try {
-      const text = await callClaude(`Summarize this patient intake for a provider chart note. Patient: ${form.patientName} | DOB: ${form.dob || "not provided"} | Chief Complaint: ${form.chiefComplaint} | Symptoms: ${form.symptoms} | Medications: ${form.medications || "none"} | Allergies: ${form.allergies || "none"} | History: ${form.history || "none"}. Write a concise clinical-style summary (4-6 sentences). Professional, structured. Output summary only.`);
+      const age = getAge(form.dob);
+      const text = await callClaude(`Summarize this patient intake for a provider chart note. Patient: ${form.patientName} | DOB: ${form.dob || "not provided"} | Age: ${age} | Chief Complaint: ${form.chiefComplaint} | Symptoms: ${form.symptoms} | Medications: ${form.medications || "none"} | Allergies: ${form.allergies || "none"} | History: ${form.history || "none"}. Write a concise clinical-style summary (4-6 sentences). Professional, structured. Use the exact age provided. Output summary only.`);
       setResult(text);
     } catch { setError("Something went wrong. Please try again."); }
     setLoading(false);
@@ -225,7 +234,6 @@ export default function Dashboard() {
       `}</style>
 
       <div className="dash-layout" style={s.layout}>
-        {/* Sidebar */}
         <aside className="sidebar" style={s.sidebar}>
           <div style={s.sidebarTop}>
             <div style={s.logo}>
@@ -254,7 +262,6 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        {/* Main */}
         <main style={s.main}>
           <div style={s.topBar}>
             <div>

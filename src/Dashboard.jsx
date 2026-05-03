@@ -16,7 +16,7 @@ async function callClaude(prompt) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-5",
+      model: claude-sonnet-4-5,
       max_tokens: 1000,
       messages: [{ role: "user", content: prompt }],
     }),
@@ -138,7 +138,7 @@ function IntakeTool() {
   const generate = async () => {
     setLoading(true); setError(""); setResult("");
     try {
-      const text = await callClaude(`Summarize this patient intake for a provider chart note. Patient: ${form.patientName} | DOB: ${form.dob || "not provided"} | Today's date: May 2 2026. Write a concise clinical-style summary (4-6 sentences). Professional, structured. Output summary only.`);
+      const text = await callClaude(`Summarize this patient intake for a provider chart note. Patient: ${form.patientName} | DOB: ${form.dob || "not provided"} | Chief Complaint: ${form.chiefComplaint} | Symptoms: ${form.symptoms} | Medications: ${form.medications || "none"} | Allergies: ${form.allergies || "none"} | History: ${form.history || "none"}. Write a concise clinical-style summary (4-6 sentences). Professional, structured. Output summary only.`);
       setResult(text);
     } catch { setError("Something went wrong. Please try again."); }
     setLoading(false);
